@@ -1,3 +1,3 @@
 #!/bin/bash
 echo Hello Linux
-cat > output.txt
+cat >output.txt
