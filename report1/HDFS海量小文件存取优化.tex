@@ -30,14 +30,16 @@
 简单介绍一下小组的成员
 
 \paragraph{董恒}
-%C、C++、python编程经验，未做过大型项目。
+C、C++、python编程经验，未做过大型项目。对神经网络有一些了解。
 
 \paragraph{李楠}
+C、C++ 编程经验。
 
 \paragraph{连家诚}
+C、C++ 编程经验，学过单片机开发。
 
 \paragraph{小结}
-总的来说，我们四个人均不是大佬级别的人物，没有太多的背景支持，所以关于这个课题的东西基本上都需要从零开始。
+总的来说，我们3个人均不是大佬级别的人物，没有太多的背景支持，所以关于这个课题的东西基本上都需要从零开始。
 
 
 
@@ -389,6 +391,27 @@ NHAR重构了索引结构去改善HDFS的元数据主框架以及文件存取性
 \item 特定文件存取的优化。没有一个策略是完全适用所有情况的，在这篇\cite{DongB}文章中，作者只对PPT的存取进行优化，由此观之，也可以对其他特定的、常用的、急于解决的文件存取进行优化。
 \end{itemize}
 
+\subsection{新思路}
+\subsubsection{对上文的总结}
+上文针对DFS做了详细的介绍，并且指出了DFS的存取问题，特别地，选择了一个通用性比较强的HDFS作为主要研究对象，探讨了它相关的问题，以及自从问题出现以来，各种的解决思路。在各路优化策略之后，是否仍有进步的空间？以及这样解决问题的方法是否仅仅适用于HDFS？
+
+在\cite{Milad}的启发下，我们做了如下的分析
+
+\subsubsection{基于预测的文件预取}
+在上文指出，大部分分布式文件系统有这样的特点，即：写一次读多次，那么去解决读取的问题会有更大的价值以及进步空间。要解决读取的问题，就是要解决读取速度的问题，类似于使用多级缓存，在DFS中要解决的问题就是如何准确地把文件预取到本地文件系统，最终关于预取的问题，就是关于预测的问题。
+
+结合上文，我们把问题缩小到对小文件的读取预测。当用户需要读取大量小文件的时候，特别是长时间对文件进行读取的时候，可以通过学习读取模式来预测下一步可能的内容，再通过预取，等到用户用到该文件的时候可以更加节省时间。
+
+\subsubsection{类比内存读取}
+给定一个设计，为了最大化效率，计算机结构总是会使用预测，预取是一个典型的案例，这个指的是，指令或者数据在它们被使用之前加载到更快的储存里面，在DFS方面，远程的存储相当于较慢的一面，而本地储存相当于较快的一面。在内存方面，冯诺伊曼体系有一个非常重要的瓶颈，即计算是存取数据的指数级倍数，这个问题被称为memory wall. 有文章指出，现代应用会耗费一般的时钟周期等待数据从内存取出来，同样的问题也摆在了DFS方面。为了克服这个问题，处理器使用了层次化的内存系统结构，使更小的更快速的存储更加靠近处理器，使大容量的慢速的较远。这种结构完全类似DFS. 在这种情况下，预取器会预测何时取数据到cache，那么核心问题就是预测内存读取模式。
+
+现代的处理器使用了很多种预测结构，从历史来看，几乎全部的预取器是基于表结构的。也就是说，未来的事件和之前的访问历史相关。但是，当working set比predictive table大得多的时候，效率会显著下降。类比到DFS，使用DFS的目的就是存储大量的数据文件，也就是working set非常大，而使用它的时候，只会使用其中的一部分数据。所以使用其他方法来预测就显得很有必要了。
+
+\subsubsection{使用神经网络}
+当前神经网络作为一个强大的技术在序列预测问题方面，比如说自然语言处理，文本理解。而在DFS预测预取方面使用神经网络目前没有看到任何相关的研究，因而本次研究是首次的。
+
+
+
 
 
 
@@ -406,7 +429,8 @@ Mobile Computing, Vol.3, pp.785-789, June 2014
 Conference on Computer Science and Software Engineering, pp.200-205, May 2014.
 \bibitem{Lidong}Lidong Zhang, Yongwei Wu, Ruini Xue, Tse-Chuan Hsu, Hongji Yang, Yeh-Ching Chung:\emph{HybridFS - A High Performance and Balanced File System Framework with Multiple Distributed File Systems}2017 IEEE 41st Annual Computer Software and Applications Conference
 \bibitem{TaoW}Tao Wang, Shihong Yao, Zhengquan Xu, Lian Xiong, Xin Gu, Xiping Yang \emph{An Effective Strategy for Improving small file problem in Distributed file system}, International Conference on Information Science and Control Engineering, pp.122-126, 2015
-\bibitem{DongB}Dong, B., Qiu, J., Zheng, O., Zhong, X., Li, J., Li, Y.: \emph{A novel approachtoimprovingtheefﬁciencyofstoringandaccessingsmall ﬁles on Hadoop: a case study by powerpoint ﬁles} In: Proceedings of International Conference on Services Computing, pp. 65–72 (2010) 
+\bibitem{DongB}Dong, B., Qiu, J., Zheng, O., Zhong, X., Li, J., Li, Y.: \emph{A novel approach to improving the efﬁciency of storing and accessing small ﬁles on Hadoop: a case study by powerpoint ﬁles} In: Proceedings of International Conference on Services Computing, pp. 65–72 (2010) 
+\bibitem{Milad}Milad Hashem Kevin Swersky: \emph{Learning Memory Access Patterns} arXiv:1803.02329v1 [cs.LG] 6 Mar 2018
 \end{thebibliography}
 
 \end{document}
