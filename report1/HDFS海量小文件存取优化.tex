@@ -5,7 +5,7 @@
   \normalfont \normalsize 
   \textsc{\\~\\~\\~\\~\\~\\University of Science and Technology of China} \\ [25pt] % Your university, school and/or department name(s)
   \horrule{0.5pt} \\[0.4cm] % Thin top horizontal rule
-  \huge HDFS海量小文件存取优化 \\ % The assignment title
+  \huge 基于LSTM的DFS小文件存取优化 \\ % The assignment title
   \horrule{2pt} \\[0.5cm] % Thick bottom horizontal rule
 }
 \newcommand{\n}{\\\indent}
@@ -410,8 +410,21 @@ NHAR重构了索引结构去改善HDFS的元数据主框架以及文件存取性
 \subsubsection{使用神经网络}
 当前神经网络作为一个强大的技术在序列预测问题方面，比如说自然语言处理，文本理解。而在DFS预测预取方面使用神经网络目前没有看到任何相关的研究，因而本次研究是首次的。
 
+对此做几点说明
+\begin{enumerate}
+\item 普通的深度神经网络主要针对标准化的数据，比如固定长度的特征向量或者图片转化成的RGB张量，对于序列化的数据使用RNN已经有了很多的应用。针对RNN的梯度消失和梯度爆炸问题，学界给出的改进LSTM则解决了这个问题。
+\item 普通的预测问题可以看成回归问题，但是对于海量小文件的问题，由于数量非常大，而且目标很稀疏，此时传统的回归学习已经非常不适用了。
+\item 使用神经网络必然会增加时间的开销，这也是我们所担心的一个问题，但是考虑到目前已经有相关的神经网络加速手段，比如FPGA，而我们仅仅只用做一个开端性的工作即可。
+\item 目前神经网络发展迅速，已经不需要自己从零开始构建，我们打算使用现有的库keras(tensorflow作为底层)来搭建。
+\item 考虑到时间的因素，我们以准确率作为主要的度量。
+\end{enumerate}
 
-
+除此之外，可能会遇到以下的几点问题
+\begin{itemize}
+\item 神经网络准确率优化困难
+\item 数据集的寻找或者构建
+\item DFS和神经网络的结合
+\end{itemize}
 
 
 
