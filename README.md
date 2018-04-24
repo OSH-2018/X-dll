@@ -4,6 +4,7 @@
 - 连家诚
 
 #### 目录组成
-- report1 初期报告:DH
-- lstm 预测模块:DH
-- 可行性报告:LN
+- Report1 初期报告:DH
+- LSTM 预测模块:DH
+- Report2:LN
+- Plan.md 计划安排以及完成情况
