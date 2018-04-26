@@ -8,3 +8,4 @@
 - LSTM 预测模块:DH
 - Report2:LN
 - Plan.md 计划安排以及完成情况
+- Explanation.md FAQ :DH
