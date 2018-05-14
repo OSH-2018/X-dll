@@ -22,10 +22,20 @@ $ source ~tensorflow/bin/activate
 
 ### 安装keras 及其他可能用到的包
 ```
-pip3 install numpy jupyter keras matplotlib
+pip3 install numpy jupyter keras matplotlib 
 ```
 
 [numpy user guide](https://docs.scipy.org/doc/numpy/user/)
+
+### 常见问题
+- 有可能出现jupyter不在目录环境中,在~/.zshrc中添加
+```
+export PATH=$PATH:~/.local/bin
+```
+- 下载很慢
+```
+pip3 install tensorflow -i http://mirrors.aliyun.com/pypi/simple  --trusted-host mirrors.aliyun.com
+```
 
 ### 训练尝试
 [keras mnist tutorial](keras-mnist-tutorial)

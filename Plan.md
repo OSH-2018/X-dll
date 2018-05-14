@@ -22,3 +22,15 @@
 - DH：构建测试数据
 - LN：了解DFS相应API以及搭建集群
 - LJC：做中期报告
+
+###### week 12
+- DH: 学习搭建基本的LSTM
+  - 在LSTM目录记录相关工作，命名为Simple_LSTM.md
+- LN: 探索DFS(不限于HDFS)添加模块的方式
+  - 使用markdown，在DFS目录记录相关工作，命名为Add_Module.md
+- LJC: 寻找是否存在可用的DFS(不限于HDFS),而不必自行搭建集群。　
+  - 如果找到，请研究
+    - 相关使用方式
+    - 添加模块方式
+  - 如果没找到，请结合LN 在week９的工作，整理DFS搭建方式与流程
+  - 使用markdown，在DFS目录记录相关工作,命名为Other_DFS.md
