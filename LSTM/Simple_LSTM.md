@@ -541,3 +541,116 @@ print(score,acc)
 ![Bidirectional_POS](./img/Bidirectional_POS.png)
 此处使用GRU的Bidirectional比使用LSTM的Bidirectional有更好的准确率.
 单独GRU也比LSTM有更高的准确率
+
+## Stateful LSTM with Keras -- predicting electricity consumption
+#### 目的
+使用带有状态的LSTM预测用户用电量
+
+####　数据
+```
+https://archive.ics.uci.edu/ml/datasets/ElectricityLoadDiagrams20112014
+```
+
+#### 探索
+```
+import numpy as np
+import matplotlib.pyplot as plt
+import os
+import re
+
+fld=open(os.path.join("../data","LD2011_2014.txt"),"r")
+data=[]
+cid=250
+while True:
+    line=fld.readline()
+    if not line:
+        break
+    if line.startswith('"";'):
+        continue
+    cols=[float(re.sub(",",".",x)) for x in line.strip().split(";")[1:]]
+    data.append(cols[cid])
+```
+
+```
+NUM_ENTRIES=1000
+plt.plot(range(NUM_ENTRIES),data[0:NUM_ENTRIES])
+plt.ylabel("electricity consumption")
+plt.xlabel("time (1pt = 15 mins)")
+plt.savefig("Electricity_Consumption.png")
+
+np.save(os.path.join("../data","LD_250.npy"),np.array(data))
+```
+
+![Electricity_Consumption](./img/Electricity_Consumption.png)
+
+#### import
+```
+from keras.layers.core import Dense
+from keras.layers.recurrent import LSTM
+from keras.models import Sequential
+from sklearn.preprocessing import MinMaxScaler
+import numpy as np
+import math
+import os
+from keras.utils import plot_model
+```
+
+#### 读取数据
+```
+data=np.load(os.path.join("../data","LD_250.npy"))
+data=data.reshape(-1,1)
+scaler=MinMaxScaler(feature_range=(0,1),copy=False)
+data=scaler.fit_transform(data)
+```
+
+```
+NUM_TIMESTEPS=20
+HIDDEN_SIZE=10
+BATCH_SIZE=96
+
+X=np.zeros((data.shape[0],NUM_TIMESTEPS))
+Y=np.zeros((data.shape[0],1))
+for i in range(len(data)-NUM_TIMESTEPS-1):
+    X[i]=data[i:i+NUM_TIMESTEPS].T
+    Y[i]=data[i+NUM_TIMESTEPS+1]
+X=np.expand_dims(X,axis=2)
+```
+
+#### 分割数据
+```
+sp=int(0.7*len(data))
+Xtrain,Xtest,Ytrain,Ytest=X[0:sp],X[sp:],Y[0:sp],Y[sp:]
+```
+
+#### 训练
+```
+#stateless
+NUM_EPOCHS=5
+model=Sequential()
+model.add(LSTM(HIDDEN_SIZE,input_shape=(NUM_TIMESTEPS,1),return_sequences=False))
+model.add(Dense(1))
+
+model.compile(loss="mean_squared_error",optimizer="adam",metrics=["mean_squared_error"])
+
+model.fit(Xtrain,Ytrain,epochs=NUM_EPOCHS,batch_size=BATCH_SIZE,validation_data=(Xtest,Ytest))
+```
+
+```
+#stateful
+NUM_EPOCHS=5
+model=Sequential()
+model.add(LSTM(HIDDEN_SIZE,stateful=True,batch_input_shape=(BATCH_SIZE,NUM_TIMESTEPS,1),return_sequences=False))
+model.add(Dense(1))
+
+model.compile(loss="mean_squared_error",optimizer="adam",metrics=["mean_squared_error"])
+
+train_size=(Xtrain.shape[0] // BATCH_SIZE ) * BATCH_SIZE
+test_size=(Xtest.shape[0] // BATCH_SIZE) * BATCH_SIZE
+Xtrain,Ytrain=Xtrain[0:train_size],Ytrain[0:train_size]
+Xtest,Ytest=Xtest[0:test_size],Ytest[0:test_size]
+
+for i in range(NUM_EPOCHS):
+    print("Epoch {:d}/{:d}".format(i+1,NUM_EPOCHS))
+    model.fit(Xtrain,Ytrain,batch_size=BATCH_SIZE,epochs=1,validation_data=(Xtest,Ytest),shuffle=False)
+    model.reset_states()
+```
