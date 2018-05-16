@@ -348,3 +348,196 @@ Test score : 0.053, Accuracy : 0.984
 1 1 i love harry potter .
 1 1 he 's like , 'yeah i got acne and i love brokeback mountain '..
 ```
+
+## GRU with Keras -- POS tagging
+#### 目的
+对英语词汇进行标记,many-to-many,句子对应一组标记
+
+#### 数据
+```
+import nltk
+nltk.download()
+d treebank
+```
+
+#### import
+```
+from keras.layers.core import Activation,Dense,Dropout,RepeatVector,SpatialDropout1D
+from keras.layers.embeddings import Embedding
+from keras.layers.recurrent import GRU
+from keras.layers.wrappers import TimeDistributed
+from keras.models import Sequential
+from keras.preprocessing import sequence
+from keras.utils import np_utils
+from keras.utils import plot_model
+from sklearn.model_selection import train_test_split
+import collections
+import nltk
+import numpy as np
+import os
+```
+
+#### download data
+```
+fedata=open(os.path.join("../data","treebank_sents.txt"),"w")
+ffdata=open(os.path.join("../data","treebank_poss.txt"),"w")
+
+sents=nltk.corpus.treebank.tagged_sents()
+for sent in sents:
+    words,poss=[],[]
+    for word,pos in sent:
+        if pos =="-NONE-":
+            continue
+        words.append(word)
+        poss.append(pos)
+    fedata.write("{}\n".format(" ".join(words)))
+    ffdata.write("{}\n".format(" ".join(poss)))
+fedata.close()
+ffdata.close()
+```
+
+#### 探索
+```
+def parse_sentences(filename):
+    word_freqs=collections.Counter()
+    num_recs,maxlen=0,0
+    fin=open(filename,"rb")
+    for line in fin:
+        words=line.strip().lower().split()
+        for word in words:
+            word_freqs[word]+=1
+        if(len(words)>maxlen):
+            maxlen=len(words)
+        num_recs+=1
+    fin.close()
+    return word_freqs,maxlen,num_recs
+
+s_wordfreqs,s_maxlen,s_numrecs=parse_sentences(os.path.join("../data","treebank_sents.txt"))
+t_wordfreqs,t_maxlen,t_numrecs=parse_sentences(os.path.join("../data","treebank_poss.txt"))
+print(len(s_wordfreqs),s_maxlen,s_numrecs)
+print(len(t_wordfreqs),t_maxlen,t_numrecs)
+```
+输出为
+```
+10947 249 3914
+45 249 3914
+```
+
+#### 构建索引
+```
+MAX_SEQLEN=250
+S_MAX_FEATURES=5000
+T_MAX_FEATURES=45
+
+s_vocabsize=min(len(s_wordfreqs),S_MAX_FEATURES)+2
+s_word2index={x[0]:i+2 for i,x in enumerate(s_wordfreqs.most_common(S_MAX_FEATURES))}
+s_word2index["PAD"]=0
+s_word2index["UNK"]=1
+s_index2word={v:k for k,v in s_word2index.items()}
+
+t_vocabsize=len(t_wordfreqs)+1
+t_word2index={x[0]:i for i,x in enumerate(t_wordfreqs.most_common(T_MAX_FEATURES))}
+
+t_word2index["PAD"]=0
+t_index2word={v:k for k,v in t_word2index.items()}
+```
+
+#### 构建input
+其中tag使用了one-hot编码
+```
+def build_tensor(filename,numrecs,word2index,maxlen,make_categorical=False,num_classes=0):
+    data=np.empty((numrecs,),dtype=list)
+    fin=open(filename,"r")
+    i=0
+    for line in fin:
+        wids=[]
+        for word in line.strip().lower().split():
+            if word in word2index:
+                wids.append(word2index[word])
+            else:
+                wids.append(word2index["UNK"])
+        if make_categorical:
+            data[i]=np_utils.to_categorical(wids,num_classes=num_classes)
+        else:
+            data[i]=wids
+        i+=1
+    fin.close()
+    pdata=sequence.pad_sequences(data,maxlen=maxlen)
+    return pdata
+
+X=build_tensor(os.path.join("../data","treebank_sents.txt"),s_numrecs,s_word2index,MAX_SEQLEN)
+Y=build_tensor(os.path.join("../data","treebank_poss.txt"),t_numrecs,t_word2index,MAX_SEQLEN,True,t_vocabsize)
+```
+分割数据
+```
+Xtrain,Xtest,Ytrain,Ytest=train_test_split(X,Y,test_size=0.2,random_state=42)
+```
+
+#### 构建模型
+```
+EMBED_SIZE=128
+HIDDEN_SIZE=64
+BATCH_SIZE=32
+NUM_EPOCHS=1
+
+model=Sequential()
+model.add(Embedding(s_vocabsize,EMBED_SIZE,input_length=MAX_SEQLEN))
+model.add(SpatialDropout1D(0.2))
+model.add(GRU(HIDDEN_SIZE,dropout=0.2,recurrent_dropout=0.2))
+model.add(RepeatVector(MAX_SEQLEN))
+model.add(GRU(HIDDEN_SIZE,return_sequences=True))
+model.add(TimeDistributed(Dense(t_vocabsize)))
+model.add(Activation("softmax"))
+
+model.compile(loss="categorical_crossentropy",optimizer="adam",metrics=["accuracy"])
+```
+输出
+```
+plot_model(model,to_file="GRU_POS.png",show_shapes=True)
+```
+![GRU_POS](./img/GRU_POS.png)
+
+#### 训练
+```
+model.fit(Xtrain,Ytrain,batch_size=BATCH_SIZE,epochs=NUM_EPOCHS,validation_data=[Xtest,Ytest])
+```
+结果为
+```
+Train on 3131 samples, validate on 783 samples
+Epoch 1/1
+3131/3131 [==============================] - 43s 14ms/step - loss: 0.3016 - acc: 0.7295 - val_loss: 0.2929 - val_acc: 0.9157
+```
+```
+score,acc=model.evaluate(Xtest,Ytest,batch_size=BATCH_SIZE)
+print(score,acc)
+```
+```
+783/783 [==============================] - 2s 3ms/step
+0.2928801686294843 0.9157496759261208
+```
+
+#### 使用Bidirectional
+```
+from keras.layers.wrappers import Bidirectional
+
+model=Sequential()
+model.add(Embedding(s_vocabsize,EMBED_SIZE,input_length=MAX_SEQLEN))
+model.add(SpatialDropout1D(0.2))
+model.add(Bidirectional(GRU(HIDDEN_SIZE,dropout=0.2,recurrent_dropout=0.2)))
+model.add(RepeatVector(MAX_SEQLEN))
+model.add(Bidirectional(GRU(HIDDEN_SIZE,return_sequences=True)))
+model.add(TimeDistributed(Dense(t_vocabsize)))
+model.add(Activation("softmax"))
+
+model.compile(loss="categorical_crossentropy",optimizer="adam",metrics=["accuracy"])
+
+plot_model(model,to_file="Bidirectional_POS.png",show_shapes=True)
+
+model.fit(Xtrain,Ytrain,batch_size=BATCH_SIZE,epochs=NUM_EPOCHS,validation_data=[Xtest,Ytest])
+
+score,acc=model.evaluate(Xtest,Ytest,batch_size=BATCH_SIZE)
+print(score,acc)
+```
+![Bidirectional_POS](./img/Bidirectional_POS.png)
+此处使用GRU的Bidirectional比使用LSTM的Bidirectional有更好的准确率.
+单独GRU也比LSTM有更高的准确率
