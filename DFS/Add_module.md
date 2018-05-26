@@ -22,6 +22,10 @@
 
   ```docker run -i -t --name Client -h Master registry.cn-hangzhou.aliyuncs.com/kaibb/hadoop /bin/bash```
 
+- 配置Java环境
+  
+  由于该镜像中已经集成了JDK，所以不需要进行这一步操作，这也是选择这个镜像的好处。
+
 - 配置SSH
 
   将公钥互相添加到~/.ssh/authorized_keys中
