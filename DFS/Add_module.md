@@ -138,6 +138,8 @@
   进行格式化```hadoop namenode -format```
   然后在```/opt/tools/hadoop/sbin```目录下启动```./start-all.sh```
   
+## 添加神经网络预测模块
+  
 ## 参考资料
 
 1. [使用Docker搭建hadoop集群](https://blog.csdn.net/qq_33530388/article/details/72811705)
