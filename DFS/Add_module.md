@@ -1,6 +1,6 @@
-# 利用docker搭建HDFS集群
+## 利用docker搭建HDFS集群
 
-## 搭建环境
+### 搭建环境
 
 - 安装docker
 
@@ -32,4 +32,98 @@
   
   将IP地址互相添加到/etc/hosts中
   
-## 配置hadoop
+### 配置hadoop
+  
+  在Master节点配置，然后通过scp命令分发到各节点。总共有四个文件需要配置。
+  
+- core-site.xml
+
+  (指定namenode的地址和使用hadoop时产生的文件存放目录)
+  
+  ```
+  <configuration>
+    <property>
+      <name>fs.defaultFS</name>
+      <value>hdfs://Master:9000</value>
+    </property>
+    <property>
+      <name>hadoop.tmp.dir</name>
+      <value>/hadoop/data</value>
+    </property>
+  </configuration>
+  ```
+
+- hdfs-site.xml
+
+  (指定保存的副本的数量、namenode的存储位置和datanode的存储位置)
+
+  ```
+  <configuration>
+    <property>
+      <name>dfs.replication</name>
+      <value>1</value>
+    </property>
+    <property>
+      <name>dfs.datanode.data.dir</name>
+      <value>/hadoop/data</value>
+    </property>
+    <property>
+      <name>dfs.namenode.name.dir</name>
+      <value>/hadoop/name</value>
+    </property>
+  </configuration>
+  ```
+  
+- mapred-site.xml
+  
+  ```
+  <configuration>
+    <property>
+      <name>mapreduce.framework.name</name>
+      <value>yarn</value>
+    </property>
+  </configuration>
+  ```
+  
+- yarn-site.xml
+
+  ```
+  <configuration>
+    <property>
+      <name>yarn.resourcemanager.address</name>
+      <value>Master:8032</value>
+    </property>
+    <property>
+      <name>yarn.resourcemanager.scheduler.address</name>
+      <value>Master:8030</value> </property> <property>
+      <name>yarn.resourcemanager.resource-tracker.address</name>
+      <value>Master:8031</value>
+    </property>
+    <property>
+      <name>yarn.resourcemanager.admin.address</name>
+      <value>Master:8033</value>
+    </property>
+    <property>
+      <name>yarn.resourcemanager.webapp.address</name>
+      <value>Master:8088</value>
+    </property>
+    <property>
+       <name>yarn.nodemanager.aux-services</name>
+       <value>mapreduce_shuffle</value>
+    </property>
+    <property>
+      <name>yarn.nodemanager.aux-services.mapreduce.shuffle.class</name>
+      <value>org.apache.hadoop.mapred.ShuffleHandler</value>
+    </property>
+  </configuration>
+  ```
+  
+### 运行hadoop
+
+  进行格式化```hadoop namenode -format```
+  然后在```/opt/tools/hadoop/sbin```目录下启动```./start-all.sh```
+  
+## 参考资料
+
+1. [使用Docker搭建hadoop集群](https://blog.csdn.net/qq_33530388/article/details/72811705)
+  
