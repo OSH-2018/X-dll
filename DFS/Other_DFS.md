@@ -1,6 +1,8 @@
-JAVA API
+#### JAVA API
 
 1、获取文件系统
+
+```java
 /**
  * 获取文件系统
  * 
@@ -32,9 +34,11 @@ public static FileSystem getFileSystem() {
         
     return fs;
 }
+```
 
-2、创建文件目录
+ 2、创建文件目录
 
+```java
 /**
  * 创建文件目录
  * 
@@ -59,9 +63,11 @@ public static void mkdir(String path) {
         logger.error("", e);
     }
 }
+```
 
 3、删除文件或者文件目录
 
+```java
 /**
  * 删除文件或者文件目录
  * 
@@ -86,9 +92,11 @@ public static void rmdir(String path) {
         logger.error("", e);
     }
 }
+```
 
 4、根据filter获取目录下的文件
 
+```java
 /**
  * 根据filter获取目录下的文件
  * 
@@ -134,9 +142,11 @@ public static String[] ListFile(String path,PathFilter pathFilter) {
     
     return files;
 }
+```
 
 5、文件上传至 HDFS
 
+```java
 /**
  * 文件上传至 HDFS
  * 
@@ -168,9 +178,11 @@ public static void copyFileToHDFS(boolean delSrc, boolean overwrite,String srcFi
         logger.error("", e);
     }
 }
+```
 
 6、从 HDFS 下载文件
 
+```java
 /**
  * 从 HDFS 下载文件
  * 
@@ -199,9 +211,11 @@ public static void getFile(String srcFile,String destPath) {
         logger.error("", e);
     }
 }
+```
 
 7、获取 HDFS 集群节点信息
 
+```java
 /**
  * 获取 HDFS 集群节点信息
  * 
@@ -224,3 +238,5 @@ public static DatanodeInfo[] getHDFSNodes() {
     }
     return dataNodeStats;
 }
+```
+
