@@ -27,6 +27,10 @@
   由于该镜像中已经集成了JDK，所以不需要进行这一步操作，这也是选择这个镜像的好处。
 
 - 配置SSH
+  
+  启动SSH```/etc/init.d/ssh start```
+  
+  生成秘钥```ssh-keygen -t rsa```
 
   将公钥互相添加到~/.ssh/authorized_keys中
   
@@ -34,7 +38,7 @@
   
 ### 配置hadoop
   
-  在Master节点配置，然后通过scp命令分发到各节点。总共有四个文件需要配置。
+  在Master节点进行配置，然后通过scp命令分发到各节点。总共有四个文件需要配置(在/opt/tools/hadoop/etc/hadoop目录下)。
   
 - core-site.xml
 
@@ -117,6 +121,17 @@
     </property>
   </configuration>
   ```
+  
+- 修改slave文件
+
+  将/opt/tools/hadoop/etc/hadoop目录下的slave文件修改为
+  
+  ```
+  Slave1
+  Slave2
+  ```
+  
+#### 注：由于使用的镜像不同，hadoop的配置文件所在的目录也可能不尽相同，但具体配置应该是大同小异的。
   
 ### 运行hadoop
 
