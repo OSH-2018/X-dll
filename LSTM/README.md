@@ -22,9 +22,9 @@
 - extension
   - 1D tensor (20,) one-hot encodding
   - example: pdf [0,1,0,0,...]
-  - doc pdf jpg docx w3g opa html w3x txt xls png bin gif lua null
+  - UNK:0 doc:1 pdf:2 jpg:3 docx:4 html:5 txt:6 xls:7 png:8 gif:9 avi:10 md:11 c:12 cc:13 java:14 py:15 tex:16 rar:17 tar:18 zip:19
 - directory
-  - 1D tensor (3,)
+  - 1D tensor (5,)
   - example: /1/2/3, [1,2,3]
   - 0-9
     - 0-9
@@ -43,7 +43,7 @@
 - owner
   - 0D tensor
   - example: 4
-  - 0-5
+  - 0-9
 - created time
   - 1D tensor (4,)
   - example: 2018/6/2 17:07 [18,6,2,17]
