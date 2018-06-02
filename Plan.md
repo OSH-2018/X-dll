@@ -42,5 +42,24 @@
 - DH: 将预测模块封装成函数
   - 在LSTM目录记录相关工作。
   - 使用LSTM, GRU, Bidirectional
+  - 【完成情况】进行中
+- LN:顺延上周
+  - /DFS/Add_Module.md
+  - 【完成情况】完成
+- LJC: 顺延上周
+  - /DFS/JAVA_API.md
+  - 【完成情况】完成
+
+###### week 14
+- DH:　
+  - 继续完成上周任务
+  - 寻找学术数据集
 - LN:
-- LJC: 
+- LJC:
+
+###### week 15
+- DH:
+- LN:
+- LJC:
+
+16周开始进入考试周，力求在这两周内完成全部任务。
