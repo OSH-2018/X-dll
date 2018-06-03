@@ -138,7 +138,44 @@
   进行格式化```hadoop namenode -format```
   然后在```/opt/tools/hadoop/sbin```目录下启动```./start-all.sh```
   
+### 遇到的问题
+
+  一个问题：第一次集群启动成功，第二次就失败了，大概是我不小心改了什么配置。如果始终无法解决的话，就直接在实体机上搭建集群,步骤也差不太多。
+  
 ## 添加神经网络预测模块
+
+  计划采用shell脚本调用预测模块，以后可能还会有一些其他的乃至其他语言的处理模块，都计划采用shell脚本调用。
+
+  ### 一个简单的示例
+  
+  关于调用LSTM目录的test模块，要保证调用后全局变量的状态一直存在，就要求调用程序不能退出，为此，先编写一个python脚本调用test模块，并在其中设置一个
+  无限循环来接受参数，然后再用shell脚本调用这个python脚本。
+  
+  __exec.py__
+  
+  ```
+  import test
+  while True:
+	  command = input()
+	  if command == "exit":
+		  break
+	  else:
+	  	a = int(command[11])
+		  b = int(command[13])
+		  c = int(command[16])
+		  d = int(command[18])
+		  print(test.count(a,b,[c,d]))
+  ```
+  
+  __test.sh__
+  
+  ```
+  #!/bin/sh
+  /usr/bin/python3 exec.py
+  ```
+  这只是个简单的例子，下面要实现的是如何将HDFS下载的文件名作为参数传递给预测模块，将预测模块的输出作为参数传递给HDFS的下载命令。
+  
+  这里要说明的是，预测模块的输出并不是一个文件名，而是某种模式，我们要根据这种模式来决定要下载的文件。如何处理这种模式可能还需要其他模块来处理。
   
 ## 参考资料
 
