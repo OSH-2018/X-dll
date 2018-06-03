@@ -25,7 +25,7 @@ def network(name,id,extension,directory,size,protection,owner,created,modified,a
 # id 整数，文件的唯一identifier, 范围为0-999
 #    例如: id=36
 # extension 整数，0-19,文件拓展名，UNK:0 doc:1 pdf:2 jpg:3 docx:4 html:5 txt:6 xls:7 png:8 gif:9
-#                         avi:10 md:11 c:12 cc:13 java:14 py:15 tex:16 rar:17 tar:18 zip:19
+#                         avi:10 md:11 c:1 cc:13 java:14 py:15 tex:16 rar:17 tar:18 zip:19
 #　　　　　　　例如:　extension=16
 # directory　整数列表，且元素个数最多为５，每个元素范围0-9,表示最多５层目录，每层目录最多10个子目录
 # 　　　　　　例如: /src/local/network.py     directory=[1,4]假设src编码为１，local编码为４
