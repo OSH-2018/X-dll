@@ -71,7 +71,7 @@
   - 请用markdown 详细记录所做，所做记录在/LSTM
   - 【完成情况】
     - 6/3:　完成数据集生成,[代码](./LSTM/generate_data.py)
-    - 6/4:
+    - 6/4: ignore(name created modified access),完成对其他部分的模型构建以及测试
     - 6/5:
     - 6/5:
     - 6/7:
