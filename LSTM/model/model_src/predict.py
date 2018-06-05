@@ -117,16 +117,21 @@ def extension_predict(extension):
 
 # directory: int list [1,2,3,4,5],0-9
 directory_global=[[0]*5]*10
-directory_model=load_model("../model/directory_SimpleRNN.h5")
+directory_model=load_model("../model/directory_LSTM.h5")
 def directory_predict(directory):
     global directory_global,directory_model
     directory_global=directory_global[1:]
     directory_global.append(np.array(directory)-np.array(directory_global[8]))
-    y=to_categorical(directory_global,num_classes=10)
-    y=y.reshape(1,10,50)
+    #y=to_categorical(directory_global,num_classes=10)
+    y=np.array(directory_global)
+    y=y.reshape(1,10,5)
     pred=directory_model.predict(y,verbose=0)[0]
-    p=np.argmax(pred)
-    return [p//10000,p//1000-p//10000*10,p//100-p//1000*10,p//10-p//100*10,p-p//10*10]
+    #p=np.argmax(pred)
+    #return [p//10000,p//1000-p//10000*10,p//100-p//1000*10,p//10-p//100*10,p-p//10*10]
+    ret=[]
+    for i in pred:
+        ret.append(int(i))
+    return ret
 
 #size: int 1-1024
 size_global=[0]*10
