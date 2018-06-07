@@ -73,7 +73,7 @@
     - 6/3:　完成数据集生成,[代码](./LSTM/generate_data.py)
     - 6/4: ignore(name created modified access),完成对其他部分的模型构建以及测试
     - 6/5: 对directory预测改进
-    - 6/5:
+    - 6/5: 由论文《Design and Implememtation of a Predictive File Prefetching Algorithm》　获得启发，将使用strace构建application-based　benchmark
     - 6/7:
     - 6/8:
     - 6/9:
