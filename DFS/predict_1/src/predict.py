@@ -23,8 +23,8 @@ access_global=[]
 
 
 def predict_simple(id,directory):
-    id_return=id_predict(id)
-    directory_return=directory_predict(directory)
+    id_return=id_predict(id) #return patterns, for example '3', means i+3 i+6 i+9 i+12
+    directory_return=directory_predict(directory) #return patterns
     return (id_return,directory_return)
 
 def network(name,id,extension,directory,size,protection,owner,created,modified,access,operation):
