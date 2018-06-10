@@ -74,9 +74,10 @@
     - 6/4: ignore(name created modified access),完成对其他部分的模型构建以及测试
     - 6/5: 对directory预测改进
     - 6/5: 由论文《Design and Implememtation of a Predictive File Prefetching Algorithm》　获得启发，将使用strace构建application-based　benchmark
-    - 6/7:
-    - 6/8:
-    - 6/9:
+    - 6/7: 无
+    - 6/8: 无
+    - 6/9: 解析strace 输出
+  - 【最终完成情况】完成
 - LN:
   - 调用预测模块完成DFS模块的添加
   - 完成测试
@@ -89,6 +90,7 @@
     - 6/7:
     - 6/8:
     - 6/9:
+  - 【最终完成情况】未知
 
 - LJC:
   - 和LN合作，具体工作和LN商定，并且补充在此处
@@ -101,13 +103,18 @@
     - 6/7:
     - 6/8:
     - 6/9:
+  - 【最终完成情况】未知
 
 ###### week 16 6/10-6/16
-总结报告的书写，使用共享文档
+总结报告的书写，使用markdown,记录在/Report4/目录
 - DH:
   - 写预测模块的报告
+  - 写在/Report4/LSTM.md
+  - 图片保存在/Report4/LSTM_img
 - LN:
   - 写模块添加的相关报告
+  - 写在/Report4/DFS.md
+  - 图片保存在/Report4/DFS_img
 - LJC:
   - 写模块添加的相关报告
   - 和LN合作，具体工作和LN商定，并且补充在此处
