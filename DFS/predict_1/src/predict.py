@@ -21,6 +21,12 @@ modified_global=[]
 access_global=[]
 #operation_global=[]
 
+
+def predict_simple(id,directory):
+    id_return=id_predict(id)
+    directory_return=directory_predict(directory)
+    return (id_return,directory_return)
+
 def network(name,id,extension,directory,size,protection,owner,created,modified,access,operation):
 # name　整数列表，最大为10个字符，只考虑a-z(大小写不敏感),０－９,其他的自动忽略
 #       0-9:0-9, a-z:10-35
