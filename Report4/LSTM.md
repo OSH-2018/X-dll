@@ -99,4 +99,42 @@
 `strace -f -F -t -e trace=file -o ./trace make `
 形成的数据大概有217 MB，但是为了简化问题，本次实验只使用busybox 内含的文件，而不使用其他库文件。
 
-##### 模型
+###### [数据预处理](../LSTM/model_for_strace/model_src/strace_split.ipynb)
+strace 形成的数据，条目非常大，而且有大量的库文件，为了方便和简化问题，仅仅只取在busybox 内的文件作为本次的测试数据
+
+含有一些字符串处理等等。为了更进一步简化问题，这里不涉及目录的处理，并且只考虑在二级目录下的文件。
+
+###### 数据探索
+按文件出现的顺序对其进行编码，也包括对目录重新编码，得到dir的趋势如下：
+
+![](./LSTM_img/dir_tendency.png)
+
+上面的是局部放大，下面的是整体的。
+
+![](./LSTM_img/name_tendency.png)
+
+同样，上面的是局部放大，下面的是整体。
+
+从这里可以看出来，当按照出现的顺序进行编码的时候，有明显的可提取特征，或者趋势。
+
+但是直接对文件的名称进行编码，搜索空间太大，无法做到，从而考虑id的差值作为数量，为此，可以先统计一下delta的分布
+
+![](./LSTM_img/name_delta_filter_distr.png)
+
+做一下说明，总体的delta序列有14441个，需要编码的delta有966个，但是从图中可以看到，这里的分布比较集中，为了缩小搜索空间，可以只取出现最频繁的。我们取了30个最频繁出现的delta,这30已经囊括了70.5%的delta 序列。
+
+
+##### [模型](../LSTM/model_for_strace/model_src/model.ipynb)
+设计的模型都比较简单
+
+![](./LSTM_img/model_summary.png)
+
+由于这是动态预测，所以是逐步拟合和预测的，结果如图：
+
+![](./LSTM_img/history_model.png)
+
+设计一个baseline，用前一个delta作为本次预测，其结果如下：
+
+![](./LSTM_img/baseline_history.png)
+
+可见使用模型明显好于baseline
