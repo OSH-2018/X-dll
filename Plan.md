@@ -111,6 +111,7 @@
   - 写预测模块的报告
   - 写在/Report4/LSTM.md
   - 图片保存在/Report4/LSTM_img
+  - 【完成情况】完成
 - LN:
   - 写模块添加的相关报告
   - 写在/Report4/DFS.md

@@ -92,6 +92,8 @@
 
 看起来准确率比较高，但也是因为这里构建的数据集比较简单。
 
+##### [模块化](../DFS/predict_1/src/predict.py)
+为了模块化，建立一个单独的文件。
 
 #### [动态预测](../LSTM/model_for_strace)
 ##### 数据
@@ -138,3 +140,19 @@ strace 形成的数据，条目非常大，而且有大量的库文件，为了�
 ![](./LSTM_img/baseline_history.png)
 
 可见使用模型明显好于baseline
+
+
+##### [模块化](../DFS/predict_1/src/dynamic_predict.py)
+为了将动态预测模块化，建立一个py文件，里面的主要函数即dynamic_predict，使用的模型如上文构建。区别在于，在预测开始运行的时候，并不知道出现最频繁的文件，所以需要随着预测的进行不断更新。
+
+使用strace获得的数据测试结果如下：
+
+![](./LSTM_img/dy_history.png)
+
+可以看到，效果大概比之前减半，其根本原因就在于，一开始并不知道最频繁文件。这其实就说明，最频繁文件信息会严重影响预测。
+
+另外使用last successor作为baseline,即使用上一次的访问时候的下一个文件作为预测，得到效果如下：
+
+![](./LSTM_img/baseline_dy_history.png)
+
+从此处可以看到，在这种动态情况下，神经网络并不比last successor优秀多少。
