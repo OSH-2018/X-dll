@@ -20,7 +20,7 @@
 
   ```docker run -i -t --name Slave2 -h Master registry.cn-hangzhou.aliyuncs.com/kaibb/hadoop /bin/bash```
 
-  ```docker run -i -t --name Client -h Master registry.cn-hangzhou.aliyuncs.com/kaibb/hadoop /bin/bash```
+  (client稍后再说)
 
 - 配置Java环境
   
@@ -37,14 +37,14 @@
   将IP地址互相添加到/etc/hosts中
   
 ### 配置hadoop
-  
+
   在Master节点进行配置，然后通过scp命令分发到各节点。总共有四个文件需要配置(在/opt/tools/hadoop/etc/hadoop目录下)。
-  
+
 - core-site.xml
 
   (指定namenode的地址和使用hadoop时产生的文件存放目录)
   
-  ```
+  ```xml
   <configuration>
     <property>
       <name>fs.defaultFS</name>
@@ -61,7 +61,7 @@
 
   (指定保存的副本的数量、namenode的存储位置和datanode的存储位置)
 
-  ```
+  ```xml
   <configuration>
     <property>
       <name>dfs.replication</name>
@@ -80,7 +80,7 @@
   
 - mapred-site.xml
   
-  ```
+  ```xml
   <configuration>
     <property>
       <name>mapreduce.framework.name</name>
@@ -91,7 +91,7 @@
   
 - yarn-site.xml
 
-  ```
+  ```xml
   <configuration>
     <property>
       <name>yarn.resourcemanager.address</name>
@@ -131,28 +131,36 @@
   Slave2
   ```
   
-#### 注：由于使用的镜像不同，hadoop的配置文件所在的目录也可能不尽相同，但具体配置应该是大同小异的。
-  
+**注：由于使用的镜像不同，hadoop的配置文件所在的目录也可能不尽相同，但具体配置应该是大同小异的。**
+
 ### 运行hadoop
 
   进行格式化```hadoop namenode -format```
   然后在```/opt/tools/hadoop/sbin```目录下启动```./start-all.sh```
-  
+
+### 客户机
+
+由于我使用的镜像比较精简，很多命令都没有，所以如果用该镜像创建一个client的话，安装神经网络预测所需要的各种包比较麻烦，所以我直接将宿主机作为client访问HDFS集群。
+
+需要在宿主机上安装JDK和hadoop，其中hadoop的配置方法和master、slave节点的配置方法一样。主要是要把宿主机的IP地址和ssh公钥添加到其他节点，其他节点的IP地址和ssh公钥也要添加到宿主机中。
+
 ### 遇到的问题
 
   一个问题：第一次集群启动成功，第二次就失败了，大概是我不小心改了什么配置。如果始终无法解决的话，就直接在实体机上搭建集群,步骤也差不太多。
-  
+
+错误已经得到解决：一方面是因为docker镜像关闭后，保存的IP地址会消失，尽管我已经保存了对镜像的修改；另一方面是因为由于多次格式化，造成namdenode的namespaceID与datanode的namespaceID不一致，从而导致namenode和datanode的断连，slave节点的datanode不能启动(详情参考这个[博客](https://blog.csdn.net/love666666shen/article/details/74350358))。
+
 ## 添加神经网络预测模块
 
   计划采用shell脚本调用预测模块，以后可能还会有一些其他的乃至其他语言的处理模块，都计划采用shell脚本调用。
 
   ### 一个简单的示例
-  
+
   关于调用LSTM目录的test模块，要保证调用后全局变量的状态一直存在，就要求调用程序不能退出，为此，先编写一个python脚本调用test模块，并在其中设置一个
   无限循环来接受参数，然后再用shell脚本调用这个python脚本。
-  
+
   __exec.py__
-  
+
   ```
   import test
   while True:
@@ -166,17 +174,17 @@
 		  d = int(command[18])
 		  print(test.count(a,b,[c,d]))
   ```
-  
+
   __test.sh__
-  
+
   ```
   #!/bin/sh
   /usr/bin/python3 exec.py
   ```
   这只是个简单的例子，下面要实现的是如何将HDFS下载的文件名作为参数传递给预测模块，将预测模块的输出作为参数传递给HDFS的下载命令。
-  
+
   这里要说明的是，预测模块的输出并不是一个文件名，而是某种模式，我们要根据这种模式来决定要下载的文件。如何处理这种模式可能还需要其他模块来处理。
-  
+
 ## 参考资料
 
 1. [使用Docker搭建hadoop集群](https://blog.csdn.net/qq_33530388/article/details/72811705)
