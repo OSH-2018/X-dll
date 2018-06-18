@@ -1,7 +1,12 @@
+#### 项目说明
+DFS File Access Predict Based on Machine Learning
+
+- 详细说明请见[Report4](./Report4)
+
 #### 成员组成
 - 董恒:DH
 - 李楠:LN
-- 连家诚:LJCs
+- 连家诚:LJC
 
 #### 目录组成
 - Report1 初期报告:DH
