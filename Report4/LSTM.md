@@ -155,4 +155,53 @@ strace 形成的数据，条目非常大，而且有大量的库文件，为了�
 
 ![](./LSTM_img/baseline_dy_history.png)
 
-从此处可以看到，在这种动态情况下，神经网络并不比last successor优秀多少。
+从此处可以看到，在这种动态情况下，神经网络并不比last successor优秀多少。做几点说明
+
+- 最频繁文件信息会严重影响预测预测
+- 在没有频繁文件集的时候，神经网络效果与last successor相差不大
+- 当第二次使用同样的文件预测时，预测效果将翻倍
+
+##### 其他模型对比
+以下只附上一些模型构建图与测试数据图，在此之前做一些说明
+- 使用GRU加dropout=0.2可以达到与LSTM同样的效果
+- 使用LSTM或者GRU,加上Bidirectional得到的效果均不如原始的
+- 将窗口增大到10,并且使用一维卷积（此处以及以下均包括池化层），或者两层卷积，或者卷积加循环神经网络均效果均不如原始GRU
+
+###### GRU
+使用GRU，并且使dropout=0.2,得到的效果与LSTM非常接近。而且GRU的运算量小于LSTM.
+
+![](./LSTM_img/model_summary_GRU.png)
+
+![](./LSTM_img/history_model_GRU.png)
+
+
+###### LSTM+Bidirectional
+无论对GRU还是对LSTM,使用bidirectional之后的效果都不如原本的，这说明，文件access序列倾向于正向有序。
+
+![](./LSTM_img/model_summary_LSTM_Bi.png)
+
+![](./LSTM_img/history_model_LSTM_Bi.png)
+
+###### GRU+Bidirectional
+
+![](./LSTM_img/model_summary_GRU_Bi.png)
+
+![](./LSTM_img/history_model_GRU_Bi.png)
+
+###### Conv1D
+
+![](./LSTM_img/model_summary_Conv1D.png)
+
+![](./LSTM_img/history_model_Conv1D.png)
+
+###### Conv1D+GRU
+
+![](./LSTM_img/model_summary_Conv1D_GRU.png)
+
+![](./LSTM_img/history_model_Conv1D_GRU.png)
+
+###### Conv1D+Conv1D
+
+![](./LSTM_img/model_summary_Conv1D_Conv1D.png)　
+
+![](./LSTM_img/history_model_Conv1D_Conv1D.png)
