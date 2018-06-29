@@ -11,6 +11,8 @@ def getFilename(command):
     else: return (-1,None,None)
 
 def addToMap(name):
+	if name_id_map[name] == None:
+		return
     length = len(name_id_map)
     name_id_map[name] = length + 1
     id_name_map[length + 1] = name
@@ -58,7 +60,7 @@ while True:
         if mode == 0:                    #下载命令，检查本地临时文件夹是否已有该文件
             if check_here(src,dst) == True:
                 continue
-        if mode == 1:                    #上传命令，检查HDFS临时文件夹是否已有该命令
+        if mode == 1:                    #上传命令，检查HDFS临时文件夹是否已有该文件
             if check_hdfs(src,dst) == True:
                 continue
 
