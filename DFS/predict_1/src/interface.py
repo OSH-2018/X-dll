@@ -36,7 +36,7 @@ def check_hdfs(src,dst):           #检测HDFS临时文件夹是否已经有这�
     p = src.split("/")
     length = len(p)
     nm = p[length - 1]
-    result = os.popen(path + "hadoop fs -l " + tmp_hdfs)
+    result = os.popen(path + "hadoop fs -ls " + tmp_hdfs)
     if nm in result:
         os.system(path + "hadoop fs -mv " + tmp_hdfs + " " + dst)
     else:
